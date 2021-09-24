@@ -1,11 +1,20 @@
+DROP TABLE IF EXISTS avaliacao;
+DROP TABLE IF EXISTS cliente;
+DROP TABLE IF EXISTS compra;
+DROP TABLE IF EXISTS produto;
+DROP TABLE IF EXISTS categoria;
+DROP TABLE IF EXISTS fornecedor;
+DROP TABLE IF EXISTS pagamento;
+DROP TABLE IF EXISTS endereco;
+DROP TABLE IF EXISTS pedido;
+DROP TABLE IF EXISTS carrinho;
+DROP TABLE IF EXISTS usuario;
 
---DROP TABLE usuarios;
-DROP TABLE fornecedores;
+-- ########################### ###########################
 
-CREATE TABLE usuarios
-(
-cod_usuario	VARCHAR(7)     	NOT NULL,
-cpf 	VARCHAR(10) UNIQUE NOT NULL,
+CREATE TABLE usuario(
+cod_usuario	VARCHAR(7) NOT NULL,
+cpf 	VARCHAR(12) UNIQUE NOT NULL,
 nome 	VARCHAR(50) NOT NULL,
 senha	VARCHAR(16) NOT NULL,
 email	VARCHAR(50) NOT NULL,
@@ -13,27 +22,24 @@ telefone VARCHAR(12),
 PRIMARY KEY(cod_usuario)
 );
 
-CREATE TABLE clientes
-(
+CREATE TABLE cliente(
 cod_usuario	VARCHAR(7)     	NOT NULL,
 total_gasto	NUMERIC(9,2)	NOT NULL,
 PRIMARY KEY(cod_usuario),
-FOREIGN KEY (cod_usuario) REFERENCES usuarios(cod_usuario)
+FOREIGN KEY (cod_usuario) REFERENCES usuario(cod_usuario)
 );
 
-CREATE TABLE pagamentos 
-(
+CREATE TABLE pagamento(
 cod_usuario		VARCHAR(7)     	NOT NULL,
 numero_cartao 	VARCHAR(16)		NOT NULL UNIQUE,
 nome_titular 	VARCHAR(20)		NOT NULL,
 mes				SMALLINT		NOT NULL,
 ano				SMALLINT		NOT NULL,
 PRIMARY KEY(cod_usuario),
-FOREIGN KEY (cod_usuario) REFERENCES usuarios(cod_usuario)
+FOREIGN KEY (cod_usuario) REFERENCES usuario(cod_usuario)
 );
 
-CREATE TABLE enderecos
-(
+CREATE TABLE endereco(
 cod_usuario		VARCHAR(7)     	NOT NULL,
 pais			VARCHAR(30)		NOT NULL,
 CEP				VARCHAR(8)		NOT NULL,
@@ -44,25 +50,23 @@ rua				VARCHAR(200)	NOT NULL,
 numero			VARCHAR(8)		NOT NULL,
 complemento		VARCHAR(8),
 PRIMARY KEY (cod_usuario),
-FOREIGN KEY (cod_usuario) REFERENCES usuarios(cod_usuario)
+FOREIGN KEY (cod_usuario) REFERENCES usuario(cod_usuario)
 );
 
-CREATE TABLE fornecedores
-(cod_usuario	VARCHAR(7)     	NOT NULL,
+CREATE TABLE fornecedor(
+cod_usuario	VARCHAR(7)     	NOT NULL,
 cnpj 			VARCHAR(14)		NOT NULL,
 descricao_loja 	VARCHAR(300)	NOT NULL,
 PRIMARY KEY(cnpj),
-FOREIGN KEY (cod_usuario) REFERENCES usuarios(cod_usuario));
+FOREIGN KEY (cod_usuario) REFERENCES usuario(cod_usuario));
 
-CREATE TABLE categorias
-(
+CREATE TABLE categoria(
 cod_categoria	VARCHAR(7) 	NOT NULL,
 nome			VARCHAR(30) NOT NULL,
 PRIMARY KEY(cod_categoria)
 );
 
-CREATE TABLE produtos
-(
+CREATE TABLE produto(
 cod_produto VARCHAR(7) 		NOT NULL,
 cnpj 		VARCHAR(14)		NOT NULL,
 nome		VARCHAR(30) 	NOT NULL,
@@ -72,50 +76,111 @@ quantidade	SMALLINT		NOT NULL,
 total_gasto	NUMERIC(9,2)	NOT NULL,
 cod_categoria	VARCHAR(7) 	NOT NULL,
 PRIMARY KEY (cod_produto),
-FOREIGN KEY (cnpj) REFERENCES fornecedores(cnpj),
-FOREIGN KEY (cod_categoria)	REFERENCES categorias(cod_categoria)
+FOREIGN KEY (cnpj) REFERENCES fornecedor(cnpj),
+FOREIGN KEY (cod_categoria)	REFERENCES categoria(cod_categoria)
 );
 
-CREATE TABLE avaliacoes 
-(
-cod_produto 	VARCHAR(7) 		NOT NULL,
-cod_usuario		VARCHAR(7)     	NOT NULL,
+CREATE TABLE avaliacao(
+cod_produto 	VARCHAR(7) NOT NULL,
+cod_usuario		VARCHAR(7) NOT NULL,
 titulo 			VARCHAR(50),
 descricao		VARCHAR(300),
-estrelas		SMALLINT	check if estrelas in (0,1,2,3,4,5),
+estrelas		ENUM('0','1','2','3','4','5'),
 PRIMARY KEY (cod_produto),
-FOREIGN KEY (cod_produto) REFERENCES produtos(cod_produto),
-FOREIGN KEY (cod_usuario) REFERENCES usuarios(cod_usuario)
+FOREIGN KEY (cod_produto) REFERENCES produto(cod_produto),
+FOREIGN KEY (cod_usuario) REFERENCES usuario(cod_usuario)
 );
 
-CREATE TABLE carrinhos
-(
+CREATE TABLE carrinho(
 cod_carrinho	VARCHAR(7)			NOT NULL,
 valor			NUMERIC(9,2)		NOT NULL,
 PRIMARY KEY(cod_carrinho)
 );
 
 
-CREATE TABLE compra 
-(
+CREATE TABLE compra(
 cod_produto 	VARCHAR(7) 			NOT NULL,
 cod_carrinho	VARCHAR(7)			NOT NULL,
 quantidade		SMALLINT			NOT NULL,
 PRIMARY KEY (cod_produto),
-FOREIGN KEY (cod_produto) REFERENCES produtos(cod_produto),
-FOREIGN KEY (cod_carrinho) REFERENCES carrinhos(cod_carrinho)
+FOREIGN KEY (cod_produto) REFERENCES produto(cod_produto),
+FOREIGN KEY (cod_carrinho) REFERENCES carrinho(cod_carrinho)
 );
 
-CREATE TABLE pedidos 
-(
+CREATE TABLE pedido(
 cod_pedido 		VARCHAR(7)		NOT NULL,
 cod_carrinho 	VARCHAR(7)		NOT NULL,
 data_compra		DATE			NOT NULL,
 data_entrega	DATE			NOT NULL,
 preco_frete		NUMERIC(9,2)	NOT NULL,
 PRIMARY KEY (cod_pedido),
-FOREIGN KEY	(cod_carrinho) REFERENCES carrinhos(cod_carrinho)
+FOREIGN KEY	(cod_carrinho) REFERENCES carrinho(cod_carrinho)
 );
 
-SELECT *
-FROM usuarios;
+-- ########################### ###########################
+
+
+INSERT INTO usuario VALUES (1,11111111111, 'Kwxyout Parax', '!9-%K2x@S#', 'parax@zebuqs.com', NULL);
+INSERT INTO usuario VALUES (2,22222222222, 'Biunapel Yp', '12qwaszx', 'yp@mail.com', '8402148102');
+INSERT INTO usuario VALUES (3,33333333333, 'Jeff Obezos', 'nozama', 'jo@mail.com', NULL);
+INSERT INTO usuario VALUES (4,44444444444, 'Hilly Ricki', '29321', 'milly@zebuqs.com', '21012382');
+INSERT INTO usuario VALUES (5,55555555555, 'Kawagandu Guijia', '0123ABC!', 'kg@nomail.com', NULL);
+INSERT INTO usuario VALUES (6,66666666666, 'Racoju Vex', 'x3*193228', 'racoju@mail.com', '654712444');
+
+
+INSERT INTO cliente VALUES (1,10.00);
+INSERT INTO cliente VALUES (3,300.00);
+INSERT INTO cliente VALUES (5,5000.00);
+
+
+INSERT INTO fornecedor VALUES (2,11223344556677,'Artigos esportivos');
+INSERT INTO fornecedor VALUES (4,77665544332211,'Moda e roupa intima');
+INSERT INTO fornecedor VALUES (6,12345677654321,'Hardware e dispositivos eletronicos');
+
+
+INSERT INTO categoria VALUES (22,'ESPORTES');
+INSERT INTO categoria VALUES (44,'VESTUARIO');
+INSERT INTO categoria VALUES (66,'ELETRONICOS');
+
+
+INSERT INTO produto VALUES (222,11223344556677, 'Halter 5KG', 'Halter 5KG Vermelho com selo do INMETRO em promoção APENAS 1 EM ESTOQUE não perca!', 'halter.png', 50, 138.00, 22);
+INSERT INTO produto VALUES (444,77665544332211, 'Pochete Multiuso', 'Pochete preta com três bolsos em um', 'pochete.jpeg', 3, 14.00, 44);
+INSERT INTO produto VALUES (6666,12345677654321, 'SSD Kingston', 'KINGSTON 120GB A400 SATA3 2.5 SSD 7MM', 'ssd.jpg', 75, 299.00, 66);
+
+
+INSERT INTO pagamento VALUES (1,1111111111111111, 'Kwxyout Parax', 12, 2024);
+INSERT INTO pagamento VALUES (3,3333333333333333, 'Jacklyn Obezos', 4, 2019);
+INSERT INTO pagamento VALUES (5,5555555555555555, 'Xiao Long', 6, 2023);
+
+
+INSERT INTO endereco VALUES (1,'Espandinolia', '11111111', 'UX', 'Maertor', 'Ingenuopolis', 'Ding Quaik', '13', 'X');
+INSERT INTO endereco VALUES (3,'Amrstunited', '33333333', 'LS', 'Forlorn Polis', 'Breaklin', 'Moro Nstrass', '31', NULL);
+INSERT INTO endereco VALUES (5,'Brassia', '55555555', 'MS', 'Juskqat', 'Siyta', 'Jester Road', '199', NULL);
+
+
+INSERT INTO avaliacao VALUES (222, 5, 'Too light! Definitely not 5KG as advertised!', 'My son wanted a 5KG dumbell so he could start working out. But this weights less that a pound. I am very disappointed and I want my money back, immediately!', '0');
+INSERT INTO avaliacao VALUES (444, 3, 'Stylish, I like it!', 'Fits well with my skin tight tracksuit. Now, I can keep my most important items with me as I exercise at the park!', '5');
+INSERT INTO avaliacao VALUES (6666, 1, 'Great product, horrible delivery', NULL, '3');
+
+
+INSERT INTO carrinho VALUES (184124, 299.00);
+INSERT INTO carrinho VALUES (184125, 52.00);
+INSERT INTO carrinho VALUES (184716, 120.00);
+
+
+INSERT INTO pedido VALUES (2142, 184124, '2021-09-12', '2021-12-31', 18.00);
+INSERT INTO pedido VALUES (2149, 184125, '2021-08-12', '2021-11-24', 9.00);
+INSERT INTO pedido VALUES (2152, 184716, '2021-10-10', '2021-10-31', 49.00);
+
+
+INSERT INTO compra VALUES (222, 184124, 2);
+INSERT INTO compra VALUES (444, 184125, 5);
+INSERT INTO compra VALUES (6666, 184716, 1);
+
+
+-- ########################### ###########################
+
+SELECT * FROM usuario;
+SELECT * FROM cliente;
+SELECT * FROM fornecedor;
+SELECT * FROM categoria;
