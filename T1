@@ -1,0 +1,121 @@
+
+--DROP TABLE usuarios;
+DROP TABLE fornecedores;
+
+CREATE TABLE usuarios
+(
+cod_usuario	VARCHAR(7)     	NOT NULL,
+cpf 	VARCHAR(10) UNIQUE NOT NULL,
+nome 	VARCHAR(50) NOT NULL,
+senha	VARCHAR(16) NOT NULL,
+email	VARCHAR(50) NOT NULL,
+telefone VARCHAR(12),
+PRIMARY KEY(cod_usuario)
+);
+
+CREATE TABLE clientes
+(
+cod_usuario	VARCHAR(7)     	NOT NULL,
+total_gasto	NUMERIC(9,2)	NOT NULL,
+PRIMARY KEY(cod_usuario),
+FOREIGN KEY (cod_usuario) REFERENCES usuarios(cod_usuario)
+);
+
+CREATE TABLE pagamentos 
+(
+cod_usuario		VARCHAR(7)     	NOT NULL,
+numero_cartao 	VARCHAR(16)		NOT NULL UNIQUE,
+nome_titular 	VARCHAR(20)		NOT NULL,
+mes				SMALLINT		NOT NULL,
+ano				SMALLINT		NOT NULL,
+PRIMARY KEY(cod_usuario),
+FOREIGN KEY (cod_usuario) REFERENCES usuarios(cod_usuario)
+);
+
+CREATE TABLE enderecos
+(
+cod_usuario		VARCHAR(7)     	NOT NULL,
+pais			VARCHAR(30)		NOT NULL,
+CEP				VARCHAR(8)		NOT NULL,
+estado			VARCHAR(2)		NOT NULL,
+cidade			VARCHAR(50)		NOT NULL,
+bairro			VARCHAR(50)		NOT NULL,
+rua				VARCHAR(200)	NOT NULL,
+numero			VARCHAR(8)		NOT NULL,
+complemento		VARCHAR(8),
+PRIMARY KEY (cod_usuario),
+FOREIGN KEY (cod_usuario) REFERENCES usuarios(cod_usuario)
+);
+
+CREATE TABLE fornecedores
+(cod_usuario	VARCHAR(7)     	NOT NULL,
+cnpj 			VARCHAR(14)		NOT NULL,
+descricao_loja 	VARCHAR(300)	NOT NULL,
+PRIMARY KEY(cnpj),
+FOREIGN KEY (cod_usuario) REFERENCES usuarios(cod_usuario));
+
+CREATE TABLE categorias
+(
+cod_categoria	VARCHAR(7) 	NOT NULL,
+nome			VARCHAR(30) NOT NULL,
+PRIMARY KEY(cod_categoria)
+);
+
+CREATE TABLE produtos
+(
+cod_produto VARCHAR(7) 		NOT NULL,
+cnpj 		VARCHAR(14)		NOT NULL,
+nome		VARCHAR(30) 	NOT NULL,
+descricao	VARCHAR(200) 	NOT NULL,
+imagem		VARCHAR(200)	NOT NULL UNIQUE,
+quantidade	SMALLINT		NOT NULL,
+total_gasto	NUMERIC(9,2)	NOT NULL,
+cod_categoria	VARCHAR(7) 	NOT NULL,
+PRIMARY KEY (cod_produto),
+FOREIGN KEY (cnpj) REFERENCES fornecedores(cnpj),
+FOREIGN KEY (cod_categoria)	REFERENCES categorias(cod_categoria)
+);
+
+CREATE TABLE avaliacoes 
+(
+cod_produto 	VARCHAR(7) 		NOT NULL,
+cod_usuario		VARCHAR(7)     	NOT NULL,
+titulo 			VARCHAR(50),
+descricao		VARCHAR(300),
+estrelas		SMALLINT	check if estrelas in (0,1,2,3,4,5),
+PRIMARY KEY (cod_produto),
+FOREIGN KEY (cod_produto) REFERENCES produtos(cod_produto),
+FOREIGN KEY (cod_usuario) REFERENCES usuarios(cod_usuario)
+);
+
+CREATE TABLE carrinhos
+(
+cod_carrinho	VARCHAR(7)			NOT NULL,
+valor			NUMERIC(9,2)		NOT NULL,
+PRIMARY KEY(cod_carrinho)
+);
+
+
+CREATE TABLE compra 
+(
+cod_produto 	VARCHAR(7) 			NOT NULL,
+cod_carrinho	VARCHAR(7)			NOT NULL,
+quantidade		SMALLINT			NOT NULL,
+PRIMARY KEY (cod_produto),
+FOREIGN KEY (cod_produto) REFERENCES produtos(cod_produto),
+FOREIGN KEY (cod_carrinho) REFERENCES carrinhos(cod_carrinho)
+);
+
+CREATE TABLE pedidos 
+(
+cod_pedido 		VARCHAR(7)		NOT NULL,
+cod_carrinho 	VARCHAR(7)		NOT NULL,
+data_compra		DATE			NOT NULL,
+data_entrega	DATE			NOT NULL,
+preco_frete		NUMERIC(9,2)	NOT NULL,
+PRIMARY KEY (cod_pedido),
+FOREIGN KEY	(cod_carrinho) REFERENCES carrinhos(cod_carrinho)
+);
+
+SELECT *
+FROM usuarios;
