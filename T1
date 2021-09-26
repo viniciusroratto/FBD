@@ -83,7 +83,7 @@ nome		VARCHAR(30) 	NOT NULL,
 descricao	VARCHAR(200) 	NOT NULL,
 imagem		VARCHAR(200)	UNIQUE NOT NULL,
 quantidade	SMALLINT		NOT NULL,
-total_gasto	NUMERIC(9,2)	NOT NULL,
+total_gasto	NU NULL,
 cod_categoria	VARCHAR(7) 	NOT NULL,
 PRIMARY KEY (cod_produto),
 FOREIGN KEY (cnpj) REFERENCES fornecedor(cnpj)
@@ -95,6 +95,7 @@ ON UPDATE CASCADE
 );
 
 CREATE TABLE avaliacao(
+cod_avaliacao	VARCHAR(7) NOT NULL,
 cod_produto 	VARCHAR(7) NOT NULL,
 cod_usuario		VARCHAR(7) NOT NULL,
 titulo 			VARCHAR(50),
@@ -110,9 +111,14 @@ ON UPDATE CASCADE
 );
 
 CREATE TABLE carrinho(
+cod_compra		VARCHAR(7)			NOT NULL,
 cod_carrinho	VARCHAR(7)			NOT NULL,
+cod_usuario 	VARCHAR(7)			NOT NULL,
 valor			NUMERIC(9,2)		NOT NULL,
-PRIMARY KEY(cod_carrinho)
+PRIMARY KEY(cod_compra)
+FOREIGN KEY (cod_usuario) REFERENCES usuario(cod_usuario)
+ON DELETE SET NULL
+ON UPDATE CASCADE
 );
 
 
